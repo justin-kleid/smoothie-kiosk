@@ -1,49 +1,75 @@
-
+from bson import json_util, ObjectId
 import bson
-
-from flask import current_app, g
-from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
-
-from pymongo.errors import DuplicateKeyError, OperationFailure
-from bson.objectid import ObjectId
+from pymongo.errors import DuplicateKeyError
 from bson.errors import InvalidId
 
-def get_db():
-    """
-    Configuration method to return db instance
-    """
-    db = getattr(g, "_database", None)
+inventory_collection = None
+sales_collection = None
 
-    if db is None:
+def initialize_db(mongo):
+    global inventory_collection, sales_collection
+    inventory_collection = mongo.db.Inventory
+    sales_collection = mongo.db.Sales
 
-        db = g._database = PyMongo(current_app).db
-       
-    return db
-
-
-# Use LocalProxy to read the global db instance with just `db`
-db = LocalProxy(get_db)
-
-
-# Interacting with database
 def add_product(product):
-    pass
+    try:
+        inventory_collection.insert_one(product)
+        return json_util.dumps({'success': True})
+    except DuplicateKeyError:
+        return json_util.dumps({'error': 'Product already exists'})
 
 def get_all_products():
-    pass
+    products = list(inventory_collection.find({}))
+    return json_util.dumps(products)
 
 def update_product(product):
-    pass
+    try:
+        result = inventory_collection.update_one({'_id': ObjectId(product['_id'])}, {'$set': product})
+        return json_util.dumps({'modified_count': result.modified_count})
+    except InvalidId:
+        return json_util.dumps({'error': 'Invalid product ID'})
 
 def delete_product(product_id):
-    pass
+    try:
+        result = inventory_collection.delete_one({'_id': ObjectId(product_id)})
+        return json_util.dumps({'deleted_count': result.deleted_count})
+    except InvalidId:
+        return json_util.dumps({'error': 'Invalid product ID'})
 
 def get_inventory():
-    pass
+    inventory = list(inventory_collection.find({}, {'name': 1, 'quantity': 1}))
+    return json_util.dumps(inventory)
 
 def get_sales():
-    pass
+    sales = list(sales_collection.find({}))
+    return json_util.dumps(sales)
+
+def update_inventory(product_id, quantity):
+    try:
+        result = inventory_collection.update_one(
+            {'_id': ObjectId(product_id)},
+            {'$inc': {'quantity': quantity}}
+        )
+        return json_util.dumps({'modified_count': result.modified_count})
+    except InvalidId:
+        return json_util.dumps({'error': 'Invalid product ID'})
 
 def process_purchase(purchase_details):
-    pass
+    try:
+        product_id = ObjectId(purchase_details['product_id'])
+        quantity = purchase_details['quantity']
+        inventory_update = inventory_collection.update_one(
+            {'_id': product_id, 'quantity': {'$gte': quantity}},
+            {'$inc': {'quantity': -quantity}}
+        )
+        if inventory_update.modified_count == 0:
+            return json_util.dumps({'error': 'Missing stock or wrong product ID'})
+        sale_record = {
+            'product_id': product_id,
+            'quantity': quantity,
+        }
+        sales_collection.insert_one(sale_record)
+        return json_util.dumps({'success': 'Purchase processed'})
+    except (InvalidId, KeyError):
+        return json_util.dumps({'error': 'Invalid input data'})
