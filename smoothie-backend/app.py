@@ -3,12 +3,12 @@ from flask_pymongo import PyMongo
 import os
 import configparser
 from db import initialize_db, add_product, get_all_products, update_product, delete_product, get_inventory, get_sales, process_purchase
-from flask_httpauth import HTTPBasicAuth
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
+
 
 
 app = Flask(__name__)
-
+CORS(app)
 # Load config
 config = configparser.ConfigParser()
 config.read(os.path.abspath(os.path.join("config.ini")))
@@ -18,22 +18,9 @@ app.config["MONGO_URI"] = config['PROD']['DB_URI']
 mongo = PyMongo(app)
 initialize_db(mongo)
 
-
-auth = HTTPBasicAuth()
-
-users = {
-    "jk": generate_password_hash("password")
-}
-
-@auth.verify_password
-def verify_password(username, password):
-    if username in users and \
-            check_password_hash(users.get(username), password):
-        return username
-
 # Admin Routes
 @app.route('/admin/products', methods=['GET', 'POST', 'PUT', 'DELETE'])
-@auth.login_required
+#@auth.login_required
 def manage_products():
     if request.method == 'POST':
         product = request.json
@@ -49,13 +36,13 @@ def manage_products():
         return delete_product(product_id)
 
 @app.route('/admin/inventory', methods=['GET'])
-@auth.login_required
+#@auth.login_required delete ???
 def view_inventory():
     inventory = get_inventory()
     return Response(inventory, mimetype='application/json')
 
 @app.route('/admin/sales', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def view_sales():
     sales = get_sales()
     return Response(sales, mimetype='application/json')
