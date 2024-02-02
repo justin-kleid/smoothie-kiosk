@@ -34,7 +34,7 @@ cd smoothie-kiosk
 Set up virtual environment
 
 ```bash
-cd smoothie_backend
+cd smoothie-backend
 python3 -m venv smoothie
 source smoothie/bin/activate (For Windows: .\smoothie\Scripts\activate)
 pip install -r requirements.txt
@@ -53,7 +53,7 @@ Landing page at: http://127.0.0.1:5000
 Need Node + yarn or npm
 
 ```bash
-cd smoothie_frontend
+cd smoothie-frontend
 yarn
 yarn dev
 ```
