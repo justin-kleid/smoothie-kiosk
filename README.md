@@ -20,6 +20,7 @@ Clone the repo
 
 ```bash
 git clone https://github.com/justin-kleid/smoothie-kiosk.git
+cd smoothie-kiosk
 ```
 
 ### Build Backend
