@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/navbar';
 
+// List out the sale information for each individ smoothie sold
 export default function Sales() {
   const [sales, setSales] = useState([]);
 
@@ -35,8 +36,8 @@ export default function Sales() {
       <style jsx>{`
         .sales-container {
           padding: 20px;
-          background-color: #f4f4f4; /* Light gray background */
-          font-family: 'Arial', sans-serif; /* Change the font family */
+          background-color: #f4f4f4;
+          font-family: 'Arial', sans-serif;
         }
 
         .sales-list {

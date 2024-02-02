@@ -8,7 +8,7 @@ const Success = () => {
       <Navbar />
       <img src="img/mystery_smoothie.png" alt="success img" />
       <h1 className="success-title">Purchase Successful!</h1>
-      <p className="success-message">Your order has been processed successfully.</p>
+      <p className="success-message">Your order has been processed.</p>
       <Link href="/" className="home-link">Go back to menu</Link>
       <style jsx>{`
         .success-container {

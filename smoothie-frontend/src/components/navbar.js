@@ -49,23 +49,23 @@ const Navbar = () => {
           width: 100%;
         }
         .admin-link {
-          margin-right: auto; /* Pushes all other links to the right */
+          margin-right: auto;
         }
         a, .cart-link {
           color: white;
           text-decoration: none;
           font-weight: 500;
           transition: color 0.3s ease;
-          margin-left: 20px; /* Space between links */
+          margin-left: 20px;
           display: flex;
-          align-items: center; /* Align icon with text */
-          position: relative; /* For dropdown positioning */
+          align-items: center;
+          position: relative;
           cursor: pointer;
         }
         .cart-dropdown {
           position: absolute;
           top: 100%;
-          right: 0; /* Aligns dropdown to the right of the cart link */
+          right: 0;
           background-color: white;
           color: black;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);

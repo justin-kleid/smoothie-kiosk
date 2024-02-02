@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/navbar';
+import Navbar from '../../components/navbar'; // Adjust import path as necessary
 
 export default function Inventory() {
   const [products, setProducts] = useState([]);
@@ -16,12 +16,11 @@ export default function Inventory() {
     fetchProducts();
   }, []);
 
-  const handleUpdateQuantity = (productId, newQuantity, adjustment) => {
-    const updatedQuantity = adjustment === 'increase' ? newQuantity + 1 : newQuantity - 1;
+  const handleUpdateQuantity = (productId, newQuantity) => {
     fetch(`http://127.0.0.1:5000/admin/products`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ _id: productId, quantity: updatedQuantity }),
+      body: JSON.stringify({ _id: productId, quantity: newQuantity }),
     })
     .then(response => response.json())
     .then(() => fetchProducts())
@@ -38,12 +37,14 @@ export default function Inventory() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let finalValue = value;
+  
+    // Fix bug where 'quantity' or 'price' were strings --> thus converts the value to a number
     if (name === 'quantity' || name === 'price') {
       finalValue = value === '' ? '' : Number(value);
     }
+  
     setNewProduct(prevState => ({ ...prevState, [name]: finalValue }));
   };
-
   const handleAddProduct = (e) => {
     e.preventDefault(); // Prevent form from refreshing the page
     fetch(`http://127.0.0.1:5000/admin/products`, {
@@ -60,51 +61,57 @@ export default function Inventory() {
   };
 
   return (
-    <div>
-      <Navbar />
-      <h1>Inventory Management</h1>
-      <form onSubmit={handleAddProduct}>
-        <input
-          name="name"
-          value={newProduct.name}
-          onChange={handleInputChange}
-          placeholder="Name"
-          required
-        />
-        <input
-          name="quantity"
-          type="number"
-          value={newProduct.quantity}
-          onChange={handleInputChange}
-          placeholder="Quantity"
-          required
-        />
-        <input
-          name="price"
-          type="number"
-          value={newProduct.price}
-          onChange={handleInputChange}
-          placeholder="Price"
-          required
-        />
-        <textarea
-          name="description"
-          value={newProduct.description}
-          onChange={handleInputChange}
-          placeholder="Description"
-        />
-        <button type="submit">Add Product</button>
-      </form>
-      {products.map((product) => (
-        <div key={product._id.$oid}>
-          <p>Name: {product.name}</p>
-          <p>Quantity: {product.quantity}</p>
-          <p>Price: ${product.price}</p>
-          <button onClick={() => handleUpdateQuantity(product._id.$oid, product.quantity, 'increase')}>Increase Quantity</button>
-          <button onClick={() => handleUpdateQuantity(product._id.$oid, product.quantity, 'decrease')} disabled={product.quantity <= 0}>Decrease Quantity</button>
+    <div className="inventory-container">
+  <Navbar />
+  <h1 className="inventory-header">Inventory Management</h1>
+  <form onSubmit={handleAddProduct} className="inventory-form">
+    <input
+      name="name"
+      type="text"
+      value={newProduct.name}
+      onChange={handleInputChange}
+      placeholder="Name"
+      required
+    />
+    <input
+      name="quantity"
+      type="number"
+      value={newProduct.quantity}
+      onChange={handleInputChange}
+      placeholder="Quantity"
+      required
+    />
+    <input
+      name="price"
+      type="number"
+      value={newProduct.price}
+      onChange={handleInputChange}
+      placeholder="Price"
+      required
+    />
+    <textarea
+      name="description"
+      value={newProduct.description}
+      onChange={handleInputChange}
+      placeholder="Description"
+    />
+    <button type="submit">Add Product</button>
+  </form>
+  <div className="inventory-list">
+    {products.map((product) => (
+      <div key={product._id.$oid} className="product-item">
+        <p>Name: {product.name}</p>
+        <p>Quantity: {product.quantity}</p>
+        <p>Price: ${product.price}</p>
+        <div className="product-actions">
+          <button onClick={() => handleUpdateQuantity(product._id.$oid, product.quantity + 1)}>Increase Quantity</button>
+          <button onClick={() => handleUpdateQuantity(product._id.$oid, Math.max(product.quantity - 1, 0))} disabled={product.quantity <= 0}>Decrease Quantity</button>
           <button onClick={() => handleDeleteProduct(product._id.$oid)}>Delete Product</button>
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
+</div>
+
   );
-}
+        };  

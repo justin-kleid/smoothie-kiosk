@@ -1,7 +1,6 @@
-// contexts/cart-context.js
-
 import React, { createContext, useContext, useState } from 'react';
 
+// Track contents of cart across pages
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);

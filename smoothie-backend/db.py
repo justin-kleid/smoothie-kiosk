@@ -13,6 +13,7 @@ def initialize_db(mongo):
     inventory_collection = mongo.db.Inventory
     sales_collection = mongo.db.Sales
 
+# Admin database helper functions
 def add_product(product):
     try:
         inventory_collection.insert_one(product)
@@ -23,7 +24,6 @@ def add_product(product):
 def get_all_products():
     products = list(inventory_collection.find({}))
     return json_util.dumps(products)
-
 
 
 def update_product(product_data):
@@ -62,6 +62,8 @@ def get_sales():
     print(sales)
     return json_util.dumps(sales)
 
+
+# Customer database helper funcs
 def update_inventory(product_id, quantity):
     try:
         result = inventory_collection.update_one(
@@ -75,16 +77,15 @@ def update_inventory(product_id, quantity):
 def generate_transaction_id():
     return str(uuid.uuid4())
 
+# Processes purchases 1 at a time.
 def process_purchase(purchase_details):
     item_details = purchase_details['item']
     customer_info = purchase_details['customer_info']
     
-    # Find the product in the database
     product = inventory_collection.find_one({'name': item_details['name']})
     if not product:
         return jsonify({'error': 'Product not found'}), 404
 
-    # Assuming each purchase reduces the quantity by 1
     inventory_update = inventory_collection.update_one(
         {'_id': product['_id']},
         {'$inc': {'quantity': -item_details['quantity']}} 

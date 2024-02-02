@@ -20,7 +20,6 @@ initialize_db(mongo)
 
 # Admin Routes
 @app.route('/admin/products', methods=['GET', 'POST', 'PUT', 'DELETE'])
-#@auth.login_required
 def manage_products():
     if request.method == 'POST':
         product = request.json
@@ -36,13 +35,11 @@ def manage_products():
         return delete_product(product_id)
 
 @app.route('/admin/inventory', methods=['GET'])
-#@auth.login_required delete ???
 def view_inventory():
     inventory = get_inventory()
     return Response(inventory, mimetype='application/json')
 
 @app.route('/admin/sales', methods=['GET'])
-#@auth.login_required
 def view_sales():
     sales = get_sales()
     return Response(sales, mimetype='application/json')

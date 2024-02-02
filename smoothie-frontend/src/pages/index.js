@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/navbar';
 import { useRouter } from 'next/router'; 
 import { useCart } from '../contexts/cart-context';
+import "../app/globals.css"
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -40,21 +41,20 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="home-container">
       <Navbar />
-      <h1>Welcome to the Smoothie Kiosk</h1>
-      <div className="products">
+      <h1 className="page-title">Welcome to the Smoothie Kiosk</h1>
+      <div className="products-grid">
         {products.map((product) => (
-          <div key={product._id.$oid} className="product">
-            <img src={getImagePath(product.name)} alt={product.name} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover' }} />
+          <div key={product._id.$oid} className="product-card">
+            <img src={getImagePath(product.name)} alt={product.name} />
             <h2>{product.name}</h2>
             <p>{product.description}</p>
             <p>${product.price}</p>
-            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
           </div>
         ))}
       </div>
-      {/* add styles l8er */}
     </div>
   );
 }
