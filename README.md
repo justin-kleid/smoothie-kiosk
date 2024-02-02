@@ -50,7 +50,7 @@ Landing page at: http://127.0.0.1:5000
 
 ### Build Frontend
 
-Need Node + yarn or npm
+Open new terminal, and navigate back to repo. Need Node + yarn or npm
 
 ```bash
 cd smoothie-frontend
