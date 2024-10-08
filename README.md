@@ -1,6 +1,6 @@
 # smoothie-kiosk
 
-A demo vending kiosk for smoothies meant to be run locally on a computer. The project uses Python (Flask) for the backend in coordination with MongoDB. The front end used next.js.
+A demo vending kiosk for products (smoothies) meant to be run locally on a computer. The project uses Python (Flask) for the backend in coordination with MongoDB. The front end used next.js.
 
 The landing page for the front end is: http://localhost:3000/. In the front end directory, I also created a UI for the admin/owner to track inventory, make changes, etc.
 
